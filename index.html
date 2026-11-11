@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Ordini">
+<title>Ordine Fornitore</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--tx:#1b1f24;--mu:#6b7280;--br:#e5e7eb;--ac:#16a34a;--ac2:#15803d;--acs:#dcfce7;--dg:#dc2626;--sh:0 1px 3px rgba(0,0,0,.08);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1214;--card:#1a1e22;--tx:#f1f3f5;--mu:#9aa3ad;--br:#2b3138;--acs:#12331f;--sh:none}}
+:root[data-theme="dark"]{--bg:#0f1214;--card:#1a1e22;--tx:#f1f3f5;--mu:#9aa3ad;--br:#2b3138;--acs:#12331f;--sh:none}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding-bottom:110px}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 8px}
+h1{font-size:24px;margin:0;letter-spacing:-.5px}
+.sub{color:var(--mu);font-size:13px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.ib{width:42px;height:42px;border-radius:14px;background:var(--card);box-shadow:var(--sh);border:1px solid var(--br);font-size:19px}
+.ib#ab{font-size:26px;line-height:1;color:var(--ac)}
+.ib.on{background:var(--acs);border-color:var(--ac)}
+.hb{display:flex;gap:8px}
+.search{width:100%;padding:13px 16px;border-radius:14px;border:1px solid var(--br);background:var(--card);color:var(--tx);font:inherit;margin:8px 0 12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.chip{flex:none;padding:9px 15px;border-radius:99px;background:var(--card);border:1px solid var(--br);font-size:14px;font-weight:600;white-space:nowrap}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.cat{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mu);margin:18px 4px 8px}
+.item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--br);border-radius:16px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--sh)}
+.item.sel{border-color:var(--ac);background:var(--acs)}
+.nm{flex:1;min-width:0}.nm b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.nm .nt{display:block;font-style:italic;color:var(--ac)}
+.nm span{font-size:13px;color:var(--mu)}
+.st{display:flex;align-items:center;gap:6px}
+.st button{width:40px;height:40px;border-radius:12px;background:var(--bg);border:1px solid var(--br);font-size:22px;font-weight:600}
+.st button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.st .q{min-width:38px;text-align:center;font-weight:700;font-size:17px}
+.del{width:40px;height:40px;border-radius:12px;background:#fee2e2;color:var(--dg);font-size:18px}
+.empty{text-align:center;color:var(--mu);padding:50px 20px}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 35%)}
+.bar .in{max-width:640px;margin:0 auto;display:flex;gap:10px}
+.btn{flex:1;padding:16px;border-radius:16px;font-weight:700;font-size:16px;background:var(--ac);color:#fff;box-shadow:0 6px 18px rgba(22,163,74,.35)}
+.btn:disabled{background:var(--br);color:var(--mu);box-shadow:none}
+.btn.sec{background:var(--card);color:var(--tx);border:1px solid var(--br);box-shadow:none}
+.add{width:56px;flex:none;border-radius:16px;background:var(--card);border:1px solid var(--br);font-size:26px;box-shadow:var(--sh)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.ov.show{display:flex}
+.sheet{background:var(--card);width:100%;max-width:640px;border-radius:24px 24px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px));max-height:88%;overflow:auto}
+.sheet h2{margin:0 0 14px;font-size:20px}
+label{display:block;font-size:13px;color:var(--mu);margin:12px 0 5px;font-weight:600}
+.f{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--br);background:var(--bg);color:var(--tx);font:inherit}
+.row{display:flex;gap:10px;margin-top:18px}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--br);border-radius:14px;padding:14px;font:15px/1.5 inherit;font-family:inherit;margin:0}
+.note{background:#fef3c7;color:#92400e;border-radius:12px;padding:10px 14px;font-size:13px;margin-top:10px}
+
+.sc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1px solid var(--br);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:var(--sh)}
+.sc .av img{width:100%;height:100%;object-fit:contain;border-radius:14px;background:#fff}
+.sc .av{overflow:hidden;width:48px;height:48px;border-radius:14px;background:var(--acs);display:grid;place-items:center;font-size:24px;flex:none}
+.sc .nm b{font-size:17px}.bdg{background:var(--ac);color:#fff;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:700}
+.chev{color:var(--mu);font-size:22px}
+.hide{display:none!important}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--br);padding:6px 0 calc(8px + env(safe-area-inset-bottom,0px));z-index:10}
+.tabs button{flex:1;font-size:11px;color:var(--mu);padding:4px 0}.tabs button b{display:block;font-size:21px;font-weight:400}
+.tabs button.on{color:var(--ac);font-weight:700}
+.res{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--br);border-radius:16px;margin-bottom:8px;padding:12px 14px;box-shadow:var(--sh)}
+.res .nm small{display:block;color:var(--mu);font-size:13px}.res .go{color:var(--ac);font-weight:700;font-size:13px;white-space:nowrap}
+.sh{display:flex;align-items:center;gap:10px;margin:18px 2px 8px;font-weight:700}
+.sh i{width:30px;height:30px;border-radius:9px;background:var(--acs);display:grid;place-items:center;font-style:normal;overflow:hidden;flex:none}
+.sh i img{width:100%;height:100%;object-fit:contain;background:#fff}
+.sh span{margin-left:auto;color:var(--mu);font-weight:500;font-size:13px}
+.btn.sm{width:100%;padding:12px;font-size:15px;margin:2px 0 4px}
+body.hasTabs{padding-bottom:150px}
+body.hasTabs .bar{bottom:calc(60px + env(safe-area-inset-bottom,0px));padding-bottom:12px}
+.dgb{background:#fee2e2;color:var(--dg);box-shadow:none}
+.mode{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:2px;background:var(--acs);color:var(--ac2)}
+.mode.choco{background:#ede9fe;color:#6d28d9}
+.how{font-size:13.5px;color:var(--mu);margin:10px 0 0;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="display:flex;align-items:center;gap:10px"><button class="ib hide" id="bk">‹</button><div><h1 id="ttl">🍽️ Fornitori</h1><div class="sub" id="sub"></div></div></div>
+    <div class="hb"><button class="ib hide" id="ab" title="Nuovo articolo">＋</button><button class="ib hide" id="eb" title="Modifica elenco">✏️</button><button class="ib" id="sb" title="Impostazioni">⚙️</button></div>
+  </header>
+  <div id="note"></div>
+  <div id="home"><input class="search" id="hq" type="search" placeholder="Cerca un prodotto in tutti i fornitori…"><div id="hl"></div></div>
+  <div id="catv" class="hide"><div class="chips" id="cchips"></div><div id="cl"></div></div>
+  <div id="ordv" class="hide"></div>
+  <div id="sup" class="hide">
+    <input class="search" id="q" type="search" placeholder="Cerca articolo…">
+    <div class="chips" id="chips"></div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<nav class="tabs" id="tabs"><button data-t="sup" class="on"><b>🚚</b>Fornitori</button><button data-t="cat"><b>🧺</b>Per tipologia</button><button data-t="ord"><b>📝</b>Ordine</button></nav>
+<div class="bar" id="bar"><div class="in">
+  <button class="btn" id="nf">＋ Nuovo fornitore</button>
+  <button class="btn hide" id="go" disabled>Crea messaggio WhatsApp</button>
+</div></div>
+
+<div class="ov" id="ovA"><div class="sheet">
+  <h2 id="aT">Nuovo articolo</h2>
+  <label>Nome</label><input class="f" id="aN" placeholder="Es. Pomodori San Marzano">
+  <label>Categoria</label><select class="f" id="aC"></select>
+  <label>Unità di misura</label><select class="f" id="aU"><option>kg</option><option>pz</option><option>casse</option><option>lt</option><option>conf</option><option>bott</option><option>sacchi</option></select>
+  <label>Nota (solo per voi, non compare nel messaggio)</label><input class="f" id="aNt" placeholder="Es. per sangría">
+  <div class="row"><button class="btn sec" data-close>Annulla</button><button class="btn" id="aS">Salva</button></div>
+</div></div>
+
+<div class="ov" id="ovF"><div class="sheet">
+  <h2 id="fT">Nuovo fornitore</h2>
+  <label>Nome fornitore</label><input class="f" id="fN" placeholder="Es. Ortofrutta Mario">
+  <label>Come ordini a questo fornitore</label><select class="f" id="fM"><option value="whatsapp">WhatsApp, messaggio diretto</option><option value="group">Gruppo WhatsApp</option><option value="choco">App Choco</option></select>
+  <div id="fGrp" class="hide"><label>Nome del gruppo WhatsApp</label><input class="f" id="fG" placeholder="Es. BUON APPETITO PEDIDO (zona 06)">
+  <label>Link d'invito del gruppo (facoltativo)</label><input class="f" id="fGL" type="url" placeholder="https://chat.whatsapp.com/…"></div>
+  <label>Nome della persona (compare nel saluto)</label><input class="f" id="fC" placeholder="Es. Alessia">
+  <label>Numero WhatsApp (con prefisso, es. 34600123456)</label><input class="f" id="fP" type="tel">
+  <label>Secondo contatto (facoltativo)</label><input class="f" id="fC2" placeholder="Es. Alessandro">
+  <label>Numero WhatsApp del secondo contatto</label><input class="f" id="fP2" type="tel">
+  <label>Logo (facoltativo)</label><input class="f" id="fL" type="file" accept="image/*">
+  <div class="row"><button class="btn sec" data-close>Annulla</button><button class="btn" id="fS">Salva</button></div>
+  <div class="row"><button class="btn sec dgb hide" id="fD">Elimina fornitore</button></div>
+</div></div>
+
+<div class="ov" id="ovS"><div class="sheet">
+  <h2>Impostazioni</h2>
+  <label>Nome del ristorante (compare nei messaggi)</label><input class="f" id="sR" placeholder="Es. Trattoria Roma">
+  <div class="row"><button class="btn sec" data-close>Annulla</button><button class="btn" id="sS">Salva</button></div>
+</div></div>
+
+<div class="ov" id="ovM"><div class="sheet">
+  <h2>Anteprima messaggio</h2>
+  <pre id="pre"></pre>
+  <div id="pn"></div>
+  <div class="row"><button class="btn sec" id="cp">Copia</button><button class="btn" id="wa">Apri WhatsApp</button></div>
+  <div class="row hide" id="wa2r" style="margin-top:10px"><button class="btn sec" id="wa2"></button></div>
+  <div class="row" style="margin-top:10px"><button class="btn sec" data-close>Chiudi</button><button class="btn sec" id="rs" style="color:var(--dg)">Azzera quantità</button></div>
+</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+// ===== INCOLLA QUI LA CONFIGURAZIONE DI FIREBASE =====
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDIQgLzLn7rExnza9j_epuuzqZpulPGUoQ",
+  authDomain:"ordini-ristorante-4fb04.firebaseapp.com",
+  projectId:"ordini-ristorante-4fb04",
+  appId:"1:839669538913:web:a64f700e6b799716e4ca20"
+};
+// =====================================================
+const SEED=[["Pomodori secchi Agra 2,9 kg","Secco","pz"],["Panna dolce Hulala 1 l","Latticini","casse"],["Capperi al sale Rootstic 1062 ml","Secco","pz"],["Savoiardi senza glutine Schär 200 g","Secco","casse"],["Mascarpone Polenghi 500 g","Latticini","casse"],["Olive giganti dolci Sicilia 5 kg","Secco","casse"],["Pomodoro datterino 5 kg","Verdure","casse"],["Birra Peroni senza glutine 33 cl","Bevande","casse"],["Acqua frizzante San Pellegrino 50 cl","Bevande","casse"],["Prosecco Brut DOC Sorso Divino 75 cl","Bevande","casse"],["Olio extravergine Terre Francescane 250 ml","Secco","casse"]];
+const CATS=[["Verdure","🥬"],["Frutta","🍋"],["Carne","🥩"],["Pesce","🐟"],["Latticini","🧀"],["Secco","🍝"],["Bevande","🍷"],["Pulizia","🧽"],["Altro","📦"]];
+const emo=c=>(CATS.find(x=>x[0]===c)||["","📦"])[1];
+let db=null,sups=[],arts=[],cfg={},edit=false,cat="Tutti",qs="",cur=null,editF=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>String(n).replace(".",",");
+const step=u=>(u==="kg"||u==="lt")?0.5:1;
+let tab="sup",ccat="Tutti",hqs="",msgFor=null;
+const cs=()=>msgFor||cur;
+const nz=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const mine=()=>arts.filter(a=>a.sid===cs());
+const sel=()=>mine().filter(a=>a.qty>0);
+const S=()=>sups.find(x=>x.id===cs());
+const err=()=>alert("Salvataggio non riuscito: controlla la connessione e le regole di Firestore.");
+$("aC").innerHTML=CATS.map(c=>`<option>${c[0]}</option>`).join("");
+
+const MODE={whatsapp:"",group:"Gruppo",choco:"Choco"};
+const modeOf=s=>(s&&s.mode)||"whatsapp";
+const modeTag=s=>MODE[modeOf(s)]?`<span class="mode ${modeOf(s)}">${MODE[modeOf(s)]}</span>`:"";
+const logoImg=s=>s.logo?`<img src="${s.logo}" alt="" onerror="this.parentNode.textContent='🚚'">`:"🚚";
+const itemRow=a=>`<div class="item ${a.qty>0?"sel":""}"><div class="nm"><b>${esc(a.name)}</b><span>${esc(a.unit)}</span>${a.note?`<span class="nt">${esc(a.note)}</span>`:""}</div><div class="st">${a.qty>0?`<button data-m="${a.id}">−</button><span class="q">${fmt(a.qty)}</span>`:""}<button class="p" data-p="${a.id}">+</button></div></div>`;
+function renderSup(){
+  const q=nz(hqs.trim());
+  if(!q){
+    $("hl").innerHTML=sups.length?sups.map(s=>{const n=arts.filter(a=>a.sid===s.id).length,o=arts.filter(a=>a.sid===s.id&&a.qty>0).length;
+      return `<button class="sc" data-s="${s.id}"><div class="av">${logoImg(s)}</div><div class="nm"><b>${esc(s.name)}${modeTag(s)}</b><span>${n} articoli</span></div>${o?`<span class="bdg">${o}</span>`:""}<span class="chev">›</span></button>`}).join("")
+      :'<div class="empty">Nessun fornitore ancora.<br>Tocca “Nuovo fornitore” per iniziare.<br><br><button class="chip" onclick="seed()">Carica i dati di Mammafiore</button></div>';
+    return;
+  }
+  const r=arts.filter(a=>nz(a.name+" "+(a.note||"")).includes(q)).slice(0,60);
+  const sm=sups.filter(s=>nz(s.name).includes(q));
+  let h=sm.length?'<div class="cat">Fornitori</div>'+sm.map(s=>`<button class="sc" data-s="${s.id}"><div class="av">${logoImg(s)}</div><div class="nm"><b>${esc(s.name)}</b><span>${arts.filter(a=>a.sid===s.id).length} articoli</span></div><span class="chev">›</span></button>`).join(""):"";
+  h+=r.length?'<div class="cat">Prodotti trovati</div>'+r.map(a=>{const s=sups.find(x=>x.id===a.sid);return s?`<button class="res" data-s="${s.id}" data-find="${esc(a.name)}"><div class="nm"><b>${esc(a.name)}</b><small>${emo(a.cat)} ${a.cat} · ${esc(s.name)} · ${esc(a.unit)}${a.qty>0?" · nell’ordine: "+fmt(a.qty):""}</small></div><span class="go">Apri ${esc(s.name)} ›</span></button>`:""}).join(""):(sm.length?"":'<div class="empty">Nessun prodotto trovato.</div>');
+  $("hl").innerHTML=h;
+}
+function renderCat(){
+  const used=["Tutti",...CATS.map(c=>c[0]).filter(c=>arts.some(a=>a.cat===c))];
+  if(!used.includes(ccat))ccat="Tutti";
+  $("cchips").innerHTML=used.map(c=>`<button class="chip ${c===ccat?"on":""}" data-cc="${c}">${c==="Tutti"?"Tutti":emo(c)+" "+c}</button>`).join("");
+  let h="";
+  sups.forEach(s=>{
+    const g=arts.filter(a=>a.sid===s.id&&(ccat==="Tutti"||a.cat===ccat));if(!g.length)return;
+    h+=`<div class="sh"><i>${logoImg(s)}</i>${esc(s.name)}<span>${g.length} ${g.length===1?"prodotto":"prodotti"}</span></div>`+g.map(itemRow).join("");
+  });
+  $("cl").innerHTML=h||'<div class="empty">Nessun prodotto.</div>';
+}
+function renderOrd(){
+  let h="";
+  sups.forEach(s=>{
+    const g=arts.filter(a=>a.sid===s.id&&a.qty>0);if(!g.length)return;
+    h+=`<div class="sh"><i>${logoImg(s)}</i>${esc(s.name)}<span>${g.length} ${g.length===1?"prodotto":"prodotti"}</span></div>`+g.map(itemRow).join("")+`<button class="btn sm" data-msg="${s.id}">${modeOf(s)==="choco"?"Lista per Choco":modeOf(s)==="group"?"Messaggio per il gruppo":"Crea messaggio per "+esc(s.contact||s.name)}</button>`;
+  });
+  $("ordv").innerHTML=h||'<div class="empty">Nessun prodotto selezionato.<br>Aggiungi quantità da “Fornitori” o “Per tipologia”.</div>';
+}
+function render(){
+  const home=!cur||!sups.find(x=>x.id===cur);
+  if(home)cur=null;
+  $("sup").classList.toggle("hide",home);if(!home){["home","catv","ordv"].forEach(i=>$(i).classList.add("hide"))}
+  ["bk","eb","ab","go"].forEach(i=>$(i).classList.toggle("hide",home));
+  $("sb").classList.toggle("hide",!home&&false);
+  $("tabs").classList.toggle("hide",!home);document.body.classList.toggle("hasTabs",home);
+  if(home){
+    $("home").classList.toggle("hide",tab!=="sup");$("catv").classList.toggle("hide",tab!=="cat");$("ordv").classList.toggle("hide",tab!=="ord");
+    document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
+    $("nf").classList.toggle("hide",tab!=="sup");$("bar").classList.toggle("hide",tab!=="sup");
+    $("ttl").textContent=tab==="sup"?"🍽️ "+(cfg.restaurant||"Fornitori"):tab==="cat"?"🧺 Per tipologia":"📝 Ordine di oggi";
+    $("sub").textContent=tab==="sup"?(sups.length?"Scegli un fornitore o cerca un prodotto":"Aggiungi il tuo primo fornitore"):tab==="cat"?"Tutti i prodotti, divisi per fornitore":"Quello che hai selezionato, per fornitore";
+    if(tab==="sup")renderSup();else if(tab==="cat")renderCat();else renderOrd();
+    return;
+  }
+  $("bar").classList.remove("hide");$("nf").classList.add("hide");
+  const n=sel().length;
+  $("ttl").textContent=S().name;
+  $("sub").textContent=mine().length+" articoli · "+n+" nell’ordine";
+  $("go").disabled=n===0;
+  $("go").textContent=(modeOf(S())==="choco"?"Lista per Choco":"Crea messaggio")+(n?` (${n})`:"");
+  $("eb").classList.toggle("on",edit);
+  const used=["Tutti",...CATS.map(c=>c[0]).filter(c=>mine().some(a=>a.cat===c))];
+  if(!used.includes(cat))cat="Tutti";
+  $("chips").innerHTML=used.map(c=>`<button class="chip ${c===cat?"on":""}" data-cat="${c}">${c==="Tutti"?"Tutti":emo(c)+" "+c}</button>`).join("");
+  const f=mine().filter(a=>(cat==="Tutti"||a.cat===cat)&&a.name.toLowerCase().includes(qs.toLowerCase()));
+  if(!f.length){$("list").innerHTML=`<div class="empty">${mine().length?"Nessun articolo trovato.":"Nessun articolo per questo fornitore.<br>Tocca ＋ per aggiungerlo."}</div>`;return}
+  let h="";
+  CATS.forEach(([c])=>{
+    const g=f.filter(a=>a.cat===c);if(!g.length)return;
+    h+=`<div class="cat">${emo(c)} ${c}</div>`+g.map(a=>`<div class="item ${a.qty>0?"sel":""}"><div class="nm"><b>${esc(a.name)}</b><span>${esc(a.unit)}</span>${a.note?`<span class="nt">${esc(a.note)}</span>`:""}</div>`+
+    (edit?`<button class="del" style="background:var(--card);color:inherit;margin-right:6px" data-edit="${a.id}">✏️</button><button class="del" data-del="${a.id}">🗑</button>`:
+    `<div class="st">${a.qty>0?`<button data-m="${a.id}">−</button><span class="q">${fmt(a.qty)}</span>`:""}<button class="p" data-p="${a.id}">+</button></div>`)+`</div>`).join("");
+  });
+  $("list").innerHTML=h;
+}
+function setQty(id,v){if(db)db.doc("articles/"+id).update({qty:Math.max(0,v)}).catch(err)}
+$("home").onclick=e=>{const b=e.target.closest("[data-s]");if(b){cur=b.dataset.s;cat="Tutti";qs=b.dataset.find||"";$("q").value=qs;edit=false;try{history.pushState({s:1},"")}catch(_){}render();scrollTo(0,0)}};
+$("hq").oninput=e=>{hqs=e.target.value;renderSup()};
+$("tabs").onclick=e=>{const b=e.target.closest("[data-t]");if(b){tab=b.dataset.t;render();scrollTo(0,0)}};
+$("cchips").onclick=e=>{const b=e.target.closest("[data-cc]");if(b){ccat=b.dataset.cc;render()}};
+const qtyHandler=e=>{const b=e.target.closest("button");if(!b)return;const get=id=>arts.find(a=>a.id===id);
+  if(b.dataset.p){const a=get(b.dataset.p);setQty(a.id,(a.qty||0)+step(a.unit))}
+  if(b.dataset.m){const a=get(b.dataset.m);setQty(a.id,(a.qty||0)-step(a.unit))}
+  if(b.dataset.msg){msgFor=b.dataset.msg;showMsg()}};
+$("catv").addEventListener("click",qtyHandler);$("ordv").addEventListener("click",qtyHandler);
+const goBack=()=>{if(history.state&&history.state.s){history.back()}else{cur=null;edit=false;render()}};
+$("bk").onclick=goBack;
+window.addEventListener("popstate",()=>{if(cur){cur=null;edit=false;render()}});
+let tx=0,ty=0,tt=0,tok=false;
+document.addEventListener("touchstart",e=>{const t=e.touches[0];tx=t.clientX;ty=t.clientY;tt=Date.now();tok=!!cur&&e.touches.length===1&&!document.querySelector(".ov.show")&&!e.target.closest(".chips,input,textarea,select")},{passive:true});
+document.addEventListener("touchend",e=>{if(!tok)return;tok=false;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;if(dx>80&&Math.abs(dy)<dx*.5&&Date.now()-tt<900)goBack()},{passive:true});
+$("list").onclick=e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const get=id=>arts.find(a=>a.id===id);
+  if(b.dataset.p){const a=get(b.dataset.p);setQty(a.id,(a.qty||0)+step(a.unit))}
+  if(b.dataset.m){const a=get(b.dataset.m);setQty(a.id,(a.qty||0)-step(a.unit))}
+  if(b.dataset.edit){openA(get(b.dataset.edit))}
+  if(b.dataset.del){const a=get(b.dataset.del);if(confirm("Eliminare “"+a.name+"”?"))db.doc("articles/"+a.id).delete().catch(err)}
+};
+$("chips").onclick=e=>{const b=e.target.closest("[data-cat]");if(b){cat=b.dataset.cat;render()}};
+$("q").oninput=e=>{qs=e.target.value;render()};
+$("eb").onclick=()=>{edit=!edit;render()};
+const open=id=>$(id).classList.add("show"),shut=()=>{msgFor=null;document.querySelectorAll(".ov").forEach(o=>o.classList.remove("show"))};
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=shut);
+document.querySelectorAll(".ov").forEach(o=>o.onclick=e=>{if(e.target===o)shut()});
+let editA=null;
+function openA(a){editA=a?a.id:null;$("aT").textContent=a?"Modifica articolo":"Nuovo articolo";$("aN").value=a?a.name:"";$("aNt").value=a?a.note||"":"";if(a){$("aC").value=a.cat;if(![...$("aU").options].some(o=>o.value===a.unit)){const o=document.createElement("option");o.textContent=a.unit;$("aU").append(o)}$("aU").value=a.unit}open("ovA");setTimeout(()=>$("aN").focus(),50)}
+$("ab").onclick=()=>openA(null);
+$("aS").onclick=async()=>{
+  const name=$("aN").value.trim();if(!name||!db)return;
+  const d={name,cat:$("aC").value,unit:$("aU").value,note:$("aNt").value.trim()};
+  try{if(editA)await db.doc("articles/"+editA).update(d);else await db.collection("articles").add({...d,qty:0,sid:cur});shut()}catch(e){err()}
+};
+function openF(s){editF=s?s.id:null;$("fT").textContent=s?"Modifica fornitore":"Nuovo fornitore";$("fN").value=s?s.name:"";$("fP").value=s?s.phone||"":"";$("fC").value=s?s.contact||"":"";$("fC2").value=s?s.contact2||"":"";$("fP2").value=s?s.phone2||"":"";$("fM").value=modeOf(s);$("fG").value=s?s.groupName||"":"";$("fGL").value=s?s.groupLink||"":"";$("fGrp").classList.toggle("hide",$("fM").value!=="group");$("fL").value="";$("fD").classList.toggle("hide",!s);open("ovF")}
+$("nf").onclick=()=>openF(null);
+$("fM").onchange=()=>$("fGrp").classList.toggle("hide",$("fM").value!=="group");
+$("sb").onclick=()=>{if(cur)openF(S());else{$("sR").value=cfg.restaurant||"";open("ovS")}};
+$("fS").onclick=async()=>{
+  const name=$("fN").value.trim();if(!name||!db)return;
+  const d={name,phone:$("fP").value.replace(/\D/g,""),contact:$("fC").value.trim(),contact2:$("fC2").value.trim(),phone2:$("fP2").value.replace(/\D/g,""),mode:$("fM").value,groupName:$("fG").value.trim(),groupLink:$("fGL").value.trim()};
+  const fl=$("fL").files[0];if(fl)d.logo=await shrink(fl);
+  try{if(editF)await db.doc("suppliers/"+editF).update(d);else await db.collection("suppliers").add(d);shut()}catch(e){err()}
+};
+$("fD").onclick=async()=>{
+  const s=S();if(!s||!confirm("Eliminare “"+s.name+"” e tutti i suoi articoli?"))return;
+  try{for(const a of mine())await db.doc("articles/"+a.id).delete();await db.doc("suppliers/"+s.id).delete();shut();cur=null;if(history.state&&history.state.s)history.replaceState(null,"");render()}catch(e){err()}
+};
+$("sS").onclick=async()=>{try{await db.doc("settings/main").set({restaurant:$("sR").value.trim()});shut()}catch(e){err()}};
+function shrink(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=160,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/png"))};im.onerror=()=>res("");im.src=r.result};r.onerror=()=>res("");r.readAsDataURL(file)})}
+function esU(u,q){const o=q===1;const m={casse:o?"caja":"cajas",cassa:o?"caja":"cajas",bott:o?"botella":"botellas",pz:o?"ud.":"uds.",kg:"kg"};return m[String(u).toLowerCase()]||u}
+function msg(who){
+  if(modeOf(S())==="choco")return sel().map(a=>`${fmt(a.qty)} ${esU(a.unit,a.qty)} ${a.name}`).join("\n");
+  const s=S(),h=new Date().getHours(),g=h<14?"Buenos días":h<21?"Buenas tardes":"Buenas noches";
+  let t=`${g} ${who||s.contact||s.name}, aquí va el pedido${cfg.restaurant?" para "+cfg.restaurant:""}:\n\n`;
+  t+=sel().map(a=>`• ${fmt(a.qty)} ${esU(a.unit,a.qty)} ${a.name}`).join("\n");
+  return t+"\n\n¡Muchas gracias!";
+}
+function showMsg(){
+  const s=S(),m=modeOf(s);
+  $("pre").textContent=msg();
+  $("wa").classList.toggle("hide",m==="choco");
+  if(m==="choco"){
+    $("pn").innerHTML='<p class="how">Questo fornitore si ordina su <b>Choco</b>: premi <b>Copia</b>, apri l’app Choco, scegli '+esc(s.name)+' e incolla la lista come promemoria mentre aggiungi i prodotti.</p>';
+  }else if(m==="group"){
+    $("pn").innerHTML='<p class="how">Si ordina nel gruppo <b>'+esc(s.groupName||"WhatsApp")+'</b>. '+(s.groupLink?'Il messaggio viene copiato e si apre il gruppo: tieni premuto nel campo di testo e scegli <b>Incolla</b>.':'Premi il pulsante e in WhatsApp scegli il gruppo: il messaggio è già scritto.')+'</p>';
+    $("wa").textContent="Apri il gruppo WhatsApp";
+  }else{
+    $("pn").innerHTML=s.phone?"":'<div class="note">Manca il numero del fornitore: WhatsApp ti chiederà di scegliere il contatto. Puoi impostarlo con ⚙️.</div>';
+    $("wa").textContent=s.contact?"WhatsApp a "+s.contact:"Apri WhatsApp";
+  }
+  $("wa2r").classList.toggle("hide",!s.phone2||m!=="whatsapp");$("wa2").textContent="WhatsApp a "+(s.contact2||"secondo contatto");
+  open("ovM");
+}
+$("go").onclick=showMsg;
+$("wa").onclick=async()=>{
+  const s=S();
+  if(modeOf(s)==="group"){
+    if(s.groupLink){try{await navigator.clipboard.writeText(msg())}catch(e){}window.open(s.groupLink,"_blank")}
+    else window.open("https://wa.me/?text="+encodeURIComponent(msg()),"_blank");
+    return;
+  }
+  window.open("https://wa.me/"+(s.phone||"")+"?text="+encodeURIComponent(msg()),"_blank");
+};
+$("wa2").onclick=()=>window.open("https://wa.me/"+S().phone2+"?text="+encodeURIComponent(msg(S().contact2||S().name)),"_blank");
+$("cp").onclick=async()=>{
+  try{await navigator.clipboard.writeText(msg());$("cp").textContent="Copiato ✓"}catch(e){const r=document.createRange();r.selectNodeContents($("pre"));getSelection().removeAllRanges();getSelection().addRange(r);$("cp").textContent="Selezionato: copia"}
+  setTimeout(()=>$("cp").textContent="Copia",2000);
+};
+$("rs").onclick=()=>{if(confirm("Azzerare tutte le quantità?")){sel().forEach(a=>setQty(a.id,0));shut()}};
+
+render();
+(async()=>{
+  if(FIREBASE_CONFIG.apiKey.startsWith("INCOLLA")){$("note").innerHTML='<div class="note">Configurazione Firebase mancante: incolla le chiavi nel file, come indicato nella guida.</div>';return}
+  try{firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore()}catch(e){$("note").innerHTML='<div class="note">Errore di connessione al database.</div>';return}
+  const er=()=>{$("note").innerHTML='<div class="note">Impossibile leggere i dati: controlla le regole di Firestore.</div>'};
+  db.collection("suppliers").onSnapshot(s=>{sups=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name,"it"));render()},er);
+  db.collection("articles").onSnapshot(s=>{arts=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name,"it"));render()},er);
+  db.doc("settings/main").onSnapshot(s=>{cfg=s.data()||{};render()},er);
+})();
+async function seed(){
+  if(!db||!confirm("Caricare Mammafiore con i suoi 11 articoli?"))return;
+  const b=db.batch();
+  b.set(db.doc("suppliers/mammafiore"),{name:"Mammafiore",contact:"Alessia",phone:"34605459582",contact2:"Alessandro",phone2:"34657148171"});
+  b.set(db.doc("settings/main"),{restaurant:"Buon Appetito Senza Glutine"});
+  SEED.forEach((a,i)=>b.set(db.doc("articles/mf"+String(i+1).padStart(2,"0")),{name:a[0],cat:a[1],unit:a[2],qty:0,sid:"mammafiore"}));
+  try{await b.commit()}catch(e){err()}
+}
+</script>
+</body>
+</html>
